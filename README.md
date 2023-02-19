@@ -1,7 +1,8 @@
+# Video Membership Web App
+A video membership web app built with `FastAPI` and `AstraDB` (`Cassandra`).  
 
 ## Install requirements
-You need `python 3.10.8`
-
+`python==3.10.8` (or higher than 3.6)
 
 ```
 python -m venv .venv  # create the virtual environment
@@ -14,3 +15,6 @@ pip install -r requirements.txt  # install the required packages
 ```
 uvicorn app.main:app --reload
 ```
+
+## References
+https://github.com/codingforentrepreneurs/video-membership

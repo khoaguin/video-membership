@@ -1,4 +1,6 @@
+# environments
 .venv
 **__pycache__**
+.env
 
 app/unencrypted/

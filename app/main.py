@@ -1,8 +1,13 @@
 from fastapi import FastAPI
 
-main_app = FastAPI()
+from . import config
+
+app = FastAPI()
+# settings = config.get_settings()
 
 
-@main_app.get("/")
+@app.get("/")
 def homepage():
-    return {"Hello": "World"}  # json data -> REST API
+    return {
+        "Hello": "World",
+    }  # json data -> REST API
