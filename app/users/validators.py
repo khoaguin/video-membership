@@ -11,5 +11,4 @@ def _validate_email(email):
         valid = True
     except EmailNotValidError as e:
         msg = str(e)
-
     return valid, msg, email
