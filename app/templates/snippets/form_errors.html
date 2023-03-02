@@ -1,0 +1,8 @@
+{%if errors %}
+<div style="margin-bottom:15px">
+    <p style="margin-bottom:2px">An error occurred, please check the following</p>
+    {% for e in errors %}
+    <li><b>{{e.loc[0]}}</b>: {{e.msg}}</li>
+    {% endfor %}
+</div>
+{% endif %}
