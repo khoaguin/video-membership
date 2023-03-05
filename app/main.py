@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic.error_wrappers import ValidationError
 
 from . import config, db, utils
+from .shortcuts import render
 from .users.models import User
 from .users.schemas import UserLoginSchema, UserSignupSchema
 
@@ -33,18 +34,14 @@ def on_startup():
 
 @app.get("/", response_class=HTMLResponse)
 def homepage(request: Request):
-    context = {"request": request, "abc": 123}
-    return templates.TemplateResponse("home.html", context)
+    context = {"abc": 123}
+    return render(request, "home.html", context)
 
 
 @app.get("/login", response_class=HTMLResponse)
 def login_get_view(request: Request):
-    return templates.TemplateResponse(
-        "auth/login.html",
-        {
-            "request": request,
-        },
-    )
+    session_id = request.cookies.get("session_id") or None
+    return render(request, "auth/login.html", {"logged_in": session_id is not None})
 
 
 @app.post("/login", response_class=HTMLResponse)
@@ -56,25 +53,24 @@ def login_post_view(
         "password": password,
     }
     data, errors = utils.valid_schema_data_or_error(raw_data, UserLoginSchema)
-    print(data["password"].get_secret_value())
-    return templates.TemplateResponse(
-        "auth/login.html",
-        {
-            "request": request,
-            "data": data,
-            "errors": errors,
-        },
-    )
+    context = {
+        "data": data,
+        "error": errors,
+    }
+    if len(errors) > 0:
+        return render(
+            request,
+            "auth/login.html",
+            context,
+            status_code=400,
+        )
+    print(data)
+    return render(request, "auth/login.html", {"logged_in": True}, cookies=data)
 
 
 @app.get("/signup", response_class=HTMLResponse)
 def signup_get_view(request: Request):
-    return templates.TemplateResponse(
-        "auth/signup.html",
-        {
-            "request": request,
-        },
-    )
+    return render(request, "auth/signup.html")
 
 
 @app.post("/signup", response_class=HTMLResponse)
@@ -90,10 +86,10 @@ def signup_post_view(
         "password_confirm": password_confirm,
     }
     data, errors = utils.valid_schema_data_or_error(raw_data, UserSignupSchema)
-    return templates.TemplateResponse(
+    return render(
+        request,
         "auth/signup.html",
         {
-            "request": request,
             "data": data,
             "errors": errors,
         },
@@ -103,4 +99,5 @@ def signup_post_view(
 @app.get("/users")
 def users_list_view():
     q = User.objects.all().limit(10)
+    User.objects.de
     return list(q)
